@@ -1,53 +1,26 @@
 <?php
 
-namespace CodersLab\CodersBookBundle\Controller;
+namespace CodersLab\ShopBundle\Entity;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use FOS\UserBundle\Doctrine\UserManager;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use FOS\UserBundle\Model\User as BaseUser;
+use Doctrine\ORM\Mapping as ORM;
 
-class DefaultController extends Controller {
-
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="fos_user")
+ */
+class User extends BaseUser
+{
     /**
-     * @Route("/new/admin")
-     * @Method ("POST")
-     * @Template()
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
-    public function createAdminAction(Request $req) {
-        $userManager = $this->get('fos_user.user_manager');
-        $admin = $userManager->createUser();
-        $password = $req->request->get('password');
-        $email = $req->request->get('mail');
+    protected $id;
 
-        if ($userManager->findUserByEmail($email)) {
-            return new Response('This email already exists');
-        }
-
-        $admin->setEmail($email);
-        $admin->setPlainPassword($password);
-        $admin->setEnabled(true);
-
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($admin);
-        $em->flush();
-
-        return [
-            'admin' => $admin
-        ];
+    public function __construct()
+    {
+        parent::__construct();
+        
     }
-
-    /**
-     * @Route("/")
-     * @Template()
-     */
-    public function indexAction() {
-        return [];
-    }
-
 }
-?>
-
