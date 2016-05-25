@@ -104,27 +104,4 @@ class Photo
     {
         return $this->itemId;
     }
-
-    /**
-     * Set item
-     *
-     * @param \CodersLab\ShopBundle\Entity\Item $item
-     * @return Photo
-     */
-    public function setItem(\CodersLab\ShopBundle\Entity\Item $item = null)
-    {
-        $this->item = $item;
-
-        return $this;
-    }
-
-    /**
-     * Get item
-     *
-     * @return \CodersLab\ShopBundle\Entity\Item 
-     */
-    public function getItem()
-    {
-        return $this->item;
-    }
 }
