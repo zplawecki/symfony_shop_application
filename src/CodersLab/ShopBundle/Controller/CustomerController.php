@@ -32,9 +32,9 @@ class CustomerController extends Controller {
                 ->getForm();
         return $form;
     }
-    
+
 //prawidlowa sciezka do wszystkich plikow to /customer/{nasz route}, itp. dla item, basket
-    
+
     /**
      * Creates a new Customer entity.
      *
@@ -63,7 +63,7 @@ class CustomerController extends Controller {
             ];
         }
     }
-    
+
     /**
      * @Route("/newCustomer", name = "customer_new")
      * @Template()
@@ -78,7 +78,7 @@ class CustomerController extends Controller {
         ];
     }
 
-    private function updatePersonForm($person) {
+    private function updateCustomerForm($person) {
 
         $form = $this->createFormBuilder($person)
                 ->add('name', 'text', ['label' => 'Imię'])
@@ -89,6 +89,48 @@ class CustomerController extends Controller {
                 ->add('save', 'submit', ['label' => 'Zapisz zmiany'])
                 ->getForm();
         return $form;
+    }
+
+    /**
+     * @Route("/update/{id}", name = "customer_update")
+     * @Method("GET")
+     * @Template()
+     */
+    public function updateCustomerGetAction($id) {
+        $repo = $this->getDoctrine()->getRepository('CodersLabShopBundle:Customer');
+
+        $customer = $repo->find($id);
+        if (!$customer) {
+            return [
+                'error' => 'Wystąpił błąd brak takiej osoby w bazie danych!'
+            ];
+        }
+        $form = $this->updateCustomerForm($customer);
+        return[
+            'form' => $form->createView()
+        ];
+    }
+
+    /**
+     * @Route("/update/{id}", name = "updated_customer_save")
+     * @Method("POST")
+     * @Template()
+     */
+    public function updateCustomerPostAction(Request $req, $id) {
+        $repo = $this->getDoctrine()->getRepository('CodersLabShopBundle:Customer');
+        $customer = $repo->find($id);
+        $form = $this->updateCustomerForm($customer, $customer->getId());
+        $form->handleRequest($req);
+
+        if ($form->isSubmitted()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($customer);
+            $em->flush();
+        }
+        return [
+            'form' => $form->createView(),
+            'success' => true
+        ];
     }
 
 }
