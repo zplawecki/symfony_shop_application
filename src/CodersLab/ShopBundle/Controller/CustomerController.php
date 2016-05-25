@@ -32,11 +32,13 @@ class CustomerController extends Controller {
                 ->getForm();
         return $form;
     }
-
+    
+//prawidlowa sciezka do wszystkich plikow to /customer/{nasz route}, itp. dla item, basket
+    
     /**
      * Creates a new Customer entity.
      *
-     * @Route("/createCustomer", name="customer_registration")
+     * @Route("/createCustomer", name="customer_registration") 
      * @Template()
      */
     public function createCustomerAction(Request $req) {
