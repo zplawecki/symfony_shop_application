@@ -2,6 +2,7 @@
 
 namespace CodersLab\ShopBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -10,8 +11,25 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table()
  * @ORM\Entity
  */
-class Basket
-{
+class Basket {
+
+    /**
+     * @ManyToOne(targetEntity="Customer", inversedBy="baskets")
+     * @JoinColumn(name="customer_id", referencedColumnName="id")
+     */
+    private $customer;
+    
+    /**
+     * @ManyToMany(targetEntity="Item", inversedBy="baskets")
+     * @JoinTable(name="baskets_items")
+     */
+    private $items;
+
+    public function __construct() {
+        $this->items = new ArrayCollection();
+    }
+
+
     /**
      * @var integer
      *
@@ -49,14 +67,12 @@ class Basket
      */
     private $quantity;
 
-
     /**
      * Get id
      *
      * @return integer 
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -66,8 +82,7 @@ class Basket
      * @param integer $status
      * @return Basket
      */
-    public function setStatus($status)
-    {
+    public function setStatus($status) {
         $this->status = $status;
 
         return $this;
@@ -78,8 +93,7 @@ class Basket
      *
      * @return integer 
      */
-    public function getStatus()
-    {
+    public function getStatus() {
         return $this->status;
     }
 
@@ -89,8 +103,7 @@ class Basket
      * @param integer $customer
      * @return Basket
      */
-    public function setCustomer($customer)
-    {
+    public function setCustomer($customer) {
         $this->customer = $customer;
 
         return $this;
@@ -101,8 +114,7 @@ class Basket
      *
      * @return integer 
      */
-    public function getCustomer()
-    {
+    public function getCustomer() {
         return $this->customer;
     }
 
@@ -112,8 +124,7 @@ class Basket
      * @param integer $itemId
      * @return Basket
      */
-    public function setItemId($itemId)
-    {
+    public function setItemId($itemId) {
         $this->itemId = $itemId;
 
         return $this;
@@ -124,8 +135,7 @@ class Basket
      *
      * @return integer 
      */
-    public function getItemId()
-    {
+    public function getItemId() {
         return $this->itemId;
     }
 
@@ -135,8 +145,7 @@ class Basket
      * @param integer $quantity
      * @return Basket
      */
-    public function setQuantity($quantity)
-    {
+    public function setQuantity($quantity) {
         $this->quantity = $quantity;
 
         return $this;
@@ -147,8 +156,8 @@ class Basket
      *
      * @return integer 
      */
-    public function getQuantity()
-    {
+    public function getQuantity() {
         return $this->quantity;
     }
+
 }

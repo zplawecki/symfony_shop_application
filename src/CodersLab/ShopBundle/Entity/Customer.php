@@ -3,6 +3,7 @@
 namespace CodersLab\ShopBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Customer
@@ -12,6 +13,15 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Customer
 {
+    /**
+     * @ORM\OneToMany(targetEntity="Basket", mappedBy="customer")
+     */
+    private $baskets;
+
+    public function __construct() {
+        $this->baskets = new ArrayCollection();
+    }
+    
     /**
      * @var integer
      *

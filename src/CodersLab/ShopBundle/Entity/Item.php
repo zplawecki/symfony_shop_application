@@ -3,6 +3,7 @@
 namespace CodersLab\ShopBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Item
@@ -10,8 +11,17 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table()
  * @ORM\Entity
  */
-class Item
-{
+class Item {
+
+    /**
+     * @ManyToMany(targetEntity="Basket", mappedBy="items")
+     */
+    private $baskets;
+
+    public function __construct() {
+        $this->baskets = new ArrayCollection();
+    }
+
     /**
      * @var integer
      *
@@ -42,14 +52,12 @@ class Item
      */
     private $price;
 
-
     /**
      * Get id
      *
      * @return integer 
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -59,8 +67,7 @@ class Item
      * @param string $name
      * @return Item
      */
-    public function setName($name)
-    {
+    public function setName($name) {
         $this->name = $name;
 
         return $this;
@@ -71,8 +78,7 @@ class Item
      *
      * @return string 
      */
-    public function getName()
-    {
+    public function getName() {
         return $this->name;
     }
 
@@ -82,8 +88,7 @@ class Item
      * @param string $description
      * @return Item
      */
-    public function setDescription($description)
-    {
+    public function setDescription($description) {
         $this->description = $description;
 
         return $this;
@@ -94,8 +99,7 @@ class Item
      *
      * @return string 
      */
-    public function getDescription()
-    {
+    public function getDescription() {
         return $this->description;
     }
 
@@ -105,8 +109,7 @@ class Item
      * @param float $price
      * @return Item
      */
-    public function setPrice($price)
-    {
+    public function setPrice($price) {
         $this->price = $price;
 
         return $this;
@@ -117,8 +120,8 @@ class Item
      *
      * @return float 
      */
-    public function getPrice()
-    {
+    public function getPrice() {
         return $this->price;
     }
+
 }
