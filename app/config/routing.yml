@@ -1,0 +1,4 @@
+coders_lab_symfony_shop:
+    resource: "@CodersLabSymfonyShopBundle/Controller/"
+    type:     annotation
+ 
