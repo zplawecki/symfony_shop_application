@@ -9,95 +9,80 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use CodersLab\ShopBundle\Entity\Customer;
 use CodersLab\ShopBundle\Form\CustomerType;
+use CodersLab\ShopBundle\Entity\User;
 
 /**
  * Customer controller.
  *
  * @Route("/customer")
  */
-class CustomerController extends Controller
-{
+class CustomerController extends Controller {
 
-    /**
-     * Lists all Customer entities.
-     *
-     * @Route("/", name="customer")
-     * @Method("GET")
-     * @Template()
-     */
-    public function indexAction()
-    {
-        $em = $this->getDoctrine()->getManager();
+    private function customerForm($customer) {
 
-        $entities = $em->getRepository('CodersLabShopBundle:Customer')->findAll();
 
-        return array(
-            'entities' => $entities,
-        );
+        $form = $this->createFormBuilder($customer)
+                ->setAction($this->generateUrl('customer_registration'))
+                ->add('name', 'text', ['label' => 'Imię'])
+                ->add('surname', 'text', ['label' => 'Nazwisko'])
+                ->add('mail', 'text', ['label' => 'Adres e-mail'])
+                ->add('password', 'password', ['label' => 'Haslo'])
+                ->add('address', 'text', ['label' => 'Adres e-mail'])
+                ->add('save', 'submit', ['label' => 'Zarejestruj sie'])
+                ->getForm();
+        return $form;
     }
+    
     /**
      * Creates a new Customer entity.
      *
-     * @Route("/", name="customer_create")
+     * @Route("/register", name="customer_registration")
      * @Method("POST")
-     * @Template("CodersLabShopBundle:Customer:new.html.twig")
+     * @Template()
      */
-    public function createAction(Request $request)
-    {
-        $entity = new Customer();
-        $form = $this->createCreateForm($entity);
-        $form->handleRequest($request);
+    public function createCustomerAction(Request $req) {
+        $repo = $this->getDoctrine()->getRepository('CodersBookBundle:Customer');
+        $customer = new Customer();
 
-        if ($form->isValid()) {
+        $form = $this->customerForm($customer);
+        $form->handleRequest($req);
+
+        if ($form->isSubmitted()) {
+            if ($repo->findByName($customer->getSurname()) || $customer->getSurname() == '') {
+                return [
+                    'error' => 'Taka osoba już istnieje lub formularz jest pusty!'
+                ];
+            }
             $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
+            $em->persist($customer);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('customer_show', array('id' => $entity->getId())));
+            return [
+                'customer' => $customer
+            ];
         }
-
-        return array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
-        );
     }
 
-    /**
-     * Creates a form to create a Customer entity.
-     *
-     * @param Customer $entity The entity
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createCreateForm(Customer $entity)
-    {
-        $form = $this->createForm(new CustomerType(), $entity, array(
-            'action' => $this->generateUrl('customer_create'),
-            'method' => 'POST',
-        ));
+    private function updatePersonForm($person) {
 
-        $form->add('submit', 'submit', array('label' => 'Create'));
-
+        $form = $this->createFormBuilder($person)
+                ->add('name', 'text', ['label' => 'Imię'])
+                ->add('surname', 'text', ['label' => 'Nazwisko'])
+                ->add('mail', 'text', ['label' => 'Adres e-mail'])
+                ->add('password', 'password', ['label' => 'Haslo'])
+                ->add('address', 'text', ['label' => 'Adres e-mail'])
+                ->add('save', 'submit', ['label' => 'Zapisz zmiany'])
+                ->getForm();
         return $form;
     }
 
-    /**
-     * Displays a form to create a new Customer entity.
-     *
-     * @Route("/new", name="customer_new")
-     * @Method("GET")
-     * @Template()
-     */
-    public function newAction()
-    {
-        $entity = new Customer();
-        $form   = $this->createCreateForm($entity);
+    
 
-        return array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
-        );
-    }
+    
+
+    
+
+   
 
     /**
      * Finds and displays a Customer entity.
@@ -106,8 +91,7 @@ class CustomerController extends Controller
      * @Method("GET")
      * @Template()
      */
-    public function showAction($id)
-    {
+    public function showAction($id) {
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('CodersLabShopBundle:Customer')->find($id);
@@ -119,7 +103,7 @@ class CustomerController extends Controller
         $deleteForm = $this->createDeleteForm($id);
 
         return array(
-            'entity'      => $entity,
+            'entity' => $entity,
             'delete_form' => $deleteForm->createView(),
         );
     }
@@ -131,8 +115,7 @@ class CustomerController extends Controller
      * @Method("GET")
      * @Template()
      */
-    public function editAction($id)
-    {
+    public function editAction($id) {
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('CodersLabShopBundle:Customer')->find($id);
@@ -145,21 +128,20 @@ class CustomerController extends Controller
         $deleteForm = $this->createDeleteForm($id);
 
         return array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
+            'entity' => $entity,
+            'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
     }
 
     /**
-    * Creates a form to edit a Customer entity.
-    *
-    * @param Customer $entity The entity
-    *
-    * @return \Symfony\Component\Form\Form The form
-    */
-    private function createEditForm(Customer $entity)
-    {
+     * Creates a form to edit a Customer entity.
+     *
+     * @param Customer $entity The entity
+     *
+     * @return \Symfony\Component\Form\Form The form
+     */
+    private function createEditForm(Customer $entity) {
         $form = $this->createForm(new CustomerType(), $entity, array(
             'action' => $this->generateUrl('customer_update', array('id' => $entity->getId())),
             'method' => 'PUT',
@@ -169,6 +151,7 @@ class CustomerController extends Controller
 
         return $form;
     }
+
     /**
      * Edits an existing Customer entity.
      *
@@ -176,8 +159,7 @@ class CustomerController extends Controller
      * @Method("PUT")
      * @Template("CodersLabShopBundle:Customer:edit.html.twig")
      */
-    public function updateAction(Request $request, $id)
-    {
+    public function updateAction(Request $request, $id) {
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('CodersLabShopBundle:Customer')->find($id);
@@ -197,19 +179,19 @@ class CustomerController extends Controller
         }
 
         return array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
+            'entity' => $entity,
+            'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
     }
+
     /**
      * Deletes a Customer entity.
      *
      * @Route("/{id}", name="customer_delete")
      * @Method("DELETE")
      */
-    public function deleteAction(Request $request, $id)
-    {
+    public function deleteAction(Request $request, $id) {
         $form = $this->createDeleteForm($id);
         $form->handleRequest($request);
 
@@ -235,13 +217,13 @@ class CustomerController extends Controller
      *
      * @return \Symfony\Component\Form\Form The form
      */
-    private function createDeleteForm($id)
-    {
+    private function createDeleteForm($id) {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('customer_delete', array('id' => $id)))
-            ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
-            ->getForm()
+                        ->setAction($this->generateUrl('customer_delete', array('id' => $id)))
+                        ->setMethod('DELETE')
+                        ->add('submit', 'submit', array('label' => 'Delete'))
+                        ->getForm()
         ;
     }
+
 }
