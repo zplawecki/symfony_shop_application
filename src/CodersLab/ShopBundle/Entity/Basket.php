@@ -4,6 +4,8 @@ namespace CodersLab\ShopBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use CodersLab\ShopBundle\Entity\Customer;
+use CodersLab\ShopBundle\Entity\Item;
 
 /**
  * Basket
@@ -14,21 +16,20 @@ use Doctrine\ORM\Mapping as ORM;
 class Basket {
 
     /**
-     * @ManyToOne(targetEntity="Customer", inversedBy="baskets")
-     * @JoinColumn(name="customer_id", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="Customer", inversedBy="baskets")
+     * @ORM\JoinColumn(name="customer_id", referencedColumnName="id")
      */
     private $customer;
-    
+
     /**
-     * @ManyToMany(targetEntity="Item", inversedBy="baskets")
-     * @JoinTable(name="baskets_items")
+     * @ORM\ManyToMany(targetEntity="Item", inversedBy="baskets")
+     * @ORM\JoinTable(name="baskets_items")
      */
     private $items;
 
     public function __construct() {
         $this->items = new ArrayCollection();
     }
-
 
     /**
      * @var integer
@@ -45,13 +46,6 @@ class Basket {
      * @ORM\Column(name="status", type="smallint")
      */
     private $status;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="customer", type="integer")
-     */
-    private $customer;
 
     /**
      * @var integer

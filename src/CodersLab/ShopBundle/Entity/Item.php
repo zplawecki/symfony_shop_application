@@ -4,6 +4,8 @@ namespace CodersLab\ShopBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use CodersLab\ShopBundle\Entity\Basket;
+use CodersLab\ShopBundle\Entity\Customer;
 
 /**
  * Item
@@ -14,7 +16,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 class Item {
 
     /**
-     * @ManyToMany(targetEntity="Basket", mappedBy="items")
+     * @ORM\ManyToMany(targetEntity="Basket", mappedBy="items")
      */
     private $baskets;
 
