@@ -6,7 +6,7 @@
 
     <!--
     <services>
-        <service id="coders_lab_symfony_shop.example" class="CodersLab\SymfonyShopBundle\Example">
+        <service id="coders_lab_shop.example" class="CodersLab\ShopBundle\Example">
             <argument type="service" id="service_id" />
             <argument>plain_value</argument>
             <argument>%parameter_name%</argument>

@@ -1,4 +1,5 @@
-coders_lab_symfony_shop:
-    resource: "@CodersLabSymfonyShopBundle/Controller/"
+coders_lab_shop:
+    resource: "@CodersLabShopBundle/Controller/"
     type:     annotation
+    prefix:   /
  
