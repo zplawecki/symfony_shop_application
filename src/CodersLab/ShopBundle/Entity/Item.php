@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use CodersLab\ShopBundle\Entity\Basket;
 use CodersLab\ShopBundle\Entity\Customer;
+use CodersLab\ShopBundle\Entity\Photo;
 
 /**
  * Item
@@ -14,15 +15,23 @@ use CodersLab\ShopBundle\Entity\Customer;
  * @ORM\Entity
  */
 class Item {
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Photo", mappedBy="item")
+     */
+    private $photos;
+
+    public function __construct() {
+        $this->photos = new ArrayCollection();
+        $this->baskets = new ArrayCollection();
+    }
 
     /**
      * @ORM\ManyToMany(targetEntity="Basket", mappedBy="items")
      */
     private $baskets;
 
-    public function __construct() {
-        $this->baskets = new ArrayCollection();
-    }
+    
 
     /**
      * @var integer
