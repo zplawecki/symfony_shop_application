@@ -21,20 +21,41 @@
                 <th>Cena</th>
                 <td>{{ item.price }}</td>
             </tr>
+            <tr>
+                <th>Ilość</th>
+                <td><input type="number" name="quantity" min="1" max="10"></td>
+            </tr>
         </tbody>
     </table>
 
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('item') }}">
-            Powrót do listy
-        </a>
-    </li>
-    <li>
-        <a href="{{ path('item_edit', { 'id': item.id }) }}">
-            Edycja
-        </a>
-    </li>
-    <li>{{ form(delete_form) }}</li>
-</ul>
+
+
+    <ul class="record_actions">
+        <li>
+            <a href="{{ path('item') }}">
+                Powrót do listy
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ path('add_to_basket', { 'id': item.id }) }}">
+                Dodaj do koszyka
+            </a>
+        </li>
+    </ul>
+
+    {% if app.user.hasRole('ROLE_ADMIN') %}
+        <ul>
+            <li>
+                <a href="{{ path('item_edit', { 'id': item.id }) }}">
+                    Edycja
+                </a>
+            </li>
+
+            <li>{{ form(delete_form) }}</li>
+        </ul>
+
+
+
+    {% endif %}
 {% endblock %}

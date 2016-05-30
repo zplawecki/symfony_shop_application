@@ -15,20 +15,20 @@
             </tr>
         </thead>
         <tbody>
-        {% for entity in entities %}
+        {% for basket in baskets %}
             <tr>
-                <td><a href="{{ path('basket_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
-                <td>{{ entity.status }}</td>
-                <td>{{ entity.customer }}</td>
-                <td>{{ entity.itemId }}</td>
-                <td>{{ entity.quantity }}</td>
+                <td><a href="{{ path('basket_show', { 'id': basket.id }) }}">{{ basket.id }}</a></td>
+                <td>{{ basket.status }}</td>
+                <td>{{ basket.customer }}</td>
+                <td>{{ basket.itemId }}</td>
+                <td>{{ basket.quantity }}</td>
                 <td>
                 <ul>
                     <li>
-                        <a href="{{ path('basket_show', { 'id': entity.id }) }}">show</a>
+                        <a href="{{ path('basket_show', { 'id': basket.id }) }}">show</a>
                     </li>
                     <li>
-                        <a href="{{ path('basket_edit', { 'id': entity.id }) }}">edit</a>
+                        <a href="{{ path('basket_edit', { 'id': basket.id }) }}">edit</a>
                     </li>
                 </ul>
                 </td>

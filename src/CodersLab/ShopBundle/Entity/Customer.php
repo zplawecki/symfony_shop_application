@@ -46,6 +46,13 @@ class Customer
      * @ORM\Column(name="surname", type="string", length=100)
      */
     private $surname;
+    
+        /**
+     * @var string
+     *
+     * @ORM\Column(name="username", type="string", length=100)
+     */
+    private $username;
 
     /**
      * @var string

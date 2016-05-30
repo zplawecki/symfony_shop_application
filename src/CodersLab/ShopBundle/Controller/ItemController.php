@@ -16,8 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @Route("/item")
  */
-class ItemController extends Controller
-{
+class ItemController extends Controller {
 
     private function itemForm($item) {
 
@@ -31,10 +30,7 @@ class ItemController extends Controller
                 ->getForm();
         return $form;
     }
-    
-    
-    
-    
+
     /**
      * Lists all Item entities.
      *
@@ -42,8 +38,7 @@ class ItemController extends Controller
      * @Method("GET")
      * @Template()
      */
-    public function indexAction()
-    {
+    public function indexAction() {
         $em = $this->getDoctrine()->getManager();
 
         $items = $em->getRepository('CodersLabShopBundle:Item')->findAll();
@@ -52,30 +47,31 @@ class ItemController extends Controller
             'items' => $items,
         );
     }
+
     /**
      * Creates a new Item entity.
      *
      * @Route("/", name="item_create")
      * @Method("POST")
      */
-    public function createAction(Request $request)
-    {
-        $item = new Item();
-        $form = $this->itemForm($item);
-        $form->handleRequest($request);
+    public function createAction(Request $request) {
+        $loggedUser = $this->getUser();
+        if ($loggedUser->hasRole('ROLE_ADMIN')) {
 
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($item);
-            $em->flush();
+            $item = new Item();
+            $form = $this->itemForm($item);
+            $form->handleRequest($request);
 
-           return $this->redirect($this->generateUrl('item_show', array('id' => $item->getId())));
-           return new Response ('dodano nowy przedmiot');
+            if ($form->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($item);
+                $em->flush();
+
+                return $this->redirect($this->generateUrl('item_show', array('id' => $item->getId())));
+                return new Response('dodano nowy przedmiot');
+            }
         }
-
-       
     }
-
 
     /**
      * Displays a form to create a new Item entity.
@@ -84,14 +80,13 @@ class ItemController extends Controller
      * @Method("GET")
      * @Template()
      */
-    public function newAction()
-    {
+    public function newAction() {
         $item = new Item();
-        $form   = $this->itemForm($item);
+        $form = $this->itemForm($item);
 
         return array(
             'item' => $item,
-            'form'   => $form->createView(),
+            'form' => $form->createView(),
         );
     }
 
@@ -102,8 +97,8 @@ class ItemController extends Controller
      * @Method("GET")
      * @Template()
      */
-    public function showAction($id)
-    {
+    public function showAction($id) {
+
         $em = $this->getDoctrine()->getManager();
 
         $item = $em->getRepository('CodersLabShopBundle:Item')->find($id);
@@ -115,7 +110,7 @@ class ItemController extends Controller
         $deleteForm = $this->createDeleteForm($id);
 
         return array(
-            'item'      => $item,
+            'item' => $item,
             'delete_form' => $deleteForm->createView(),
         );
     }
@@ -127,35 +122,38 @@ class ItemController extends Controller
      * @Method("GET")
      * @Template()
      */
-    public function editAction($id)
-    {
-        $em = $this->getDoctrine()->getManager();
+    public function editAction($id) {
 
-        $item = $em->getRepository('CodersLabShopBundle:Item')->find($id);
+        $loggedUser = $this->getUser();
+        if ($loggedUser->hasRole('ROLE_ADMIN')) {
 
-        if (!$item) {
-            throw $this->createNotFoundException('Unable to find Item entity.');
+            $em = $this->getDoctrine()->getManager();
+
+            $item = $em->getRepository('CodersLabShopBundle:Item')->find($id);
+
+            if (!$item) {
+                throw $this->createNotFoundException('Unable to find Item entity.');
+            }
+
+            $editForm = $this->createEditForm($item);
+            $deleteForm = $this->createDeleteForm($id);
+
+            return array(
+                'item' => $item,
+                'edit_form' => $editForm->createView(),
+                'delete_form' => $deleteForm->createView(),
+            );
         }
-
-        $editForm = $this->createEditForm($item);
-        $deleteForm = $this->createDeleteForm($id);
-
-        return array(
-            'item'      => $item,
-            'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
-        );
     }
 
     /**
-    * Creates a form to edit a Item entity.
-    *
-    * @param Item $entity The entity
-    *
-    * @return \Symfony\Component\Form\Form The form
-    */
-    private function createEditForm(Item $item)
-    {
+     * Creates a form to edit a Item entity.
+     *
+     * @param Item $entity The entity
+     *
+     * @return \Symfony\Component\Form\Form The form
+     */
+    private function createEditForm(Item $item) {
         $form = $this->createForm(new ItemType(), $item, array(
             'action' => $this->generateUrl('item_update', array('id' => $item->getId())),
             'method' => 'PUT',
@@ -165,6 +163,7 @@ class ItemController extends Controller
 
         return $form;
     }
+
     /**
      * Edits an existing Item entity.
      *
@@ -172,56 +171,65 @@ class ItemController extends Controller
      * @Method("PUT")
      * @Template("CodersLabShopBundle:Item:edit.html.twig")
      */
-    public function updateAction(Request $request, $id)
-    {
-        $em = $this->getDoctrine()->getManager();
+    public function updateAction(Request $request, $id) {
 
-        $item = $em->getRepository('CodersLabShopBundle:Item')->find($id);
+        $loggedUser = $this->getUser();
+        if ($loggedUser->hasRole('ROLE_ADMIN')) {
 
-        if (!$item) {
-            throw $this->createNotFoundException('Unable to find Item entity.');
-        }
-
-        $deleteForm = $this->createDeleteForm($id);
-        $editForm = $this->createEditForm($item);
-        $editForm->handleRequest($request);
-
-        if ($editForm->isValid()) {
-            $em->flush();
-
-            return $this->redirect($this->generateUrl('item_edit', array('id' => $id)));
-        }
-
-        return array(
-            'item'      => $item,
-            'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
-        );
-    }
-    /**
-     * Deletes a Item entity.
-     *
-     * @Route("/{id}", name="item_delete")
-     * @Method("DELETE")
-     */
-    public function deleteAction(Request $request, $id)
-    {
-        $form = $this->createDeleteForm($id);
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
+
             $item = $em->getRepository('CodersLabShopBundle:Item')->find($id);
 
             if (!$item) {
                 throw $this->createNotFoundException('Unable to find Item entity.');
             }
 
-            $em->remove($item);
-            $em->flush();
-        }
+            $deleteForm = $this->createDeleteForm($id);
+            $editForm = $this->createEditForm($item);
+            $editForm->handleRequest($request);
 
-        return $this->redirect($this->generateUrl('item'));
+            if ($editForm->isValid()) {
+                $em->flush();
+
+                return $this->redirect($this->generateUrl('item_edit', array('id' => $id)));
+            }
+
+            return array(
+                'item' => $item,
+                'edit_form' => $editForm->createView(),
+                'delete_form' => $deleteForm->createView(),
+            );
+        }
+    }
+
+    /**
+     * Deletes a Item entity.
+     *
+     * @Route("/{id}", name="item_delete")
+     * @Method("DELETE")
+     */
+    public function deleteAction(Request $request, $id) {
+
+        $loggedUser = $this->getUser();
+        if ($loggedUser->hasRole('ROLE_ADMIN')) {
+
+            $form = $this->createDeleteForm($id);
+            $form->handleRequest($request);
+
+            if ($form->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $item = $em->getRepository('CodersLabShopBundle:Item')->find($id);
+
+                if (!$item) {
+                    throw $this->createNotFoundException('Unable to find Item entity.');
+                }
+
+                $em->remove($item);
+                $em->flush();
+            }
+
+            return $this->redirect($this->generateUrl('item'));
+        }
     }
 
     /**
@@ -231,13 +239,13 @@ class ItemController extends Controller
      *
      * @return \Symfony\Component\Form\Form The form
      */
-    private function createDeleteForm($id)
-    {
+    private function createDeleteForm($id) {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('item_delete', array('id' => $id)))
-            ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
-            ->getForm()
+                        ->setAction($this->generateUrl('item_delete', array('id' => $id)))
+                        ->setMethod('DELETE')
+                        ->add('submit', 'submit', array('label' => 'Delete'))
+                        ->getForm()
         ;
     }
+
 }

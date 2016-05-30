@@ -9,14 +9,14 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use CodersLab\ShopBundle\Entity\Basket;
 use CodersLab\ShopBundle\Form\BasketType;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Basket controller.
  *
  * @Route("/basket")
  */
-class BasketController extends Controller
-{
+class BasketController extends Controller {
 
     /**
      * Lists all Basket entities.
@@ -25,16 +25,16 @@ class BasketController extends Controller
      * @Method("GET")
      * @Template()
      */
-    public function indexAction()
-    {
+    public function indexAction() {
         $em = $this->getDoctrine()->getManager();
 
-        $entities = $em->getRepository('CodersLabShopBundle:Basket')->findAll();
+        $basket = $em->getRepository('CodersLabShopBundle:Basket')->findAll();
 
         return array(
-            'entities' => $entities,
+            'baskets' => $basket,
         );
     }
+
     /**
      * Creates a new Basket entity.
      *
@@ -42,23 +42,22 @@ class BasketController extends Controller
      * @Method("POST")
      * @Template("CodersLabShopBundle:Basket:new.html.twig")
      */
-    public function createAction(Request $request)
-    {
-        $entity = new Basket();
-        $form = $this->createCreateForm($entity);
+    public function createAction(Request $request) {
+        $basket = new Basket();
+        $form = $this->createCreateForm($basket);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
+            $em->persist($basket);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('basket_show', array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl('basket_show', array('id' => $basket->getId())));
         }
 
         return array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
+            'basket' => $basket,
+            'form' => $form->createView(),
         );
     }
 
@@ -69,9 +68,8 @@ class BasketController extends Controller
      *
      * @return \Symfony\Component\Form\Form The form
      */
-    private function createCreateForm(Basket $entity)
-    {
-        $form = $this->createForm(new BasketType(), $entity, array(
+    private function createCreateForm(Basket $basket) {
+        $form = $this->createForm(new BasketType(), $basket, array(
             'action' => $this->generateUrl('basket_create'),
             'method' => 'POST',
         ));
@@ -84,19 +82,18 @@ class BasketController extends Controller
     /**
      * Displays a form to create a new Basket entity.
      *
-     * @Route("/new", name="basket_new")
+     * @Route("/new", name="add_to_basket")
      * @Method("GET")
      * @Template()
      */
-    public function newAction()
-    {
-        $entity = new Basket();
-        $form   = $this->createCreateForm($entity);
+    public function newAction() {
+        $basket = new Basket();
 
-        return array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
-        );
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($basket);
+        $em->flush();
+
+        return new Response('produkt dodano do koszyka');
     }
 
     /**
@@ -106,20 +103,19 @@ class BasketController extends Controller
      * @Method("GET")
      * @Template()
      */
-    public function showAction($id)
-    {
+    public function showAction($id) {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('CodersLabShopBundle:Basket')->find($id);
+        $basket = $em->getRepository('CodersLabShopBundle:Basket')->find($id);
 
-        if (!$entity) {
+        if (!$basket) {
             throw $this->createNotFoundException('Unable to find Basket entity.');
         }
 
         $deleteForm = $this->createDeleteForm($id);
 
         return array(
-            'entity'      => $entity,
+            'basket' => $basket,
             'delete_form' => $deleteForm->createView(),
         );
     }
@@ -131,37 +127,35 @@ class BasketController extends Controller
      * @Method("GET")
      * @Template()
      */
-    public function editAction($id)
-    {
+    public function editAction($id) {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('CodersLabShopBundle:Basket')->find($id);
+        $basket = $em->getRepository('CodersLabShopBundle:Basket')->find($id);
 
-        if (!$entity) {
+        if (!$basket) {
             throw $this->createNotFoundException('Unable to find Basket entity.');
         }
 
-        $editForm = $this->createEditForm($entity);
+        $editForm = $this->createEditForm($basket);
         $deleteForm = $this->createDeleteForm($id);
 
         return array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
+            'basket' => $basket,
+            'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
     }
 
     /**
-    * Creates a form to edit a Basket entity.
-    *
-    * @param Basket $entity The entity
-    *
-    * @return \Symfony\Component\Form\Form The form
-    */
-    private function createEditForm(Basket $entity)
-    {
-        $form = $this->createForm(new BasketType(), $entity, array(
-            'action' => $this->generateUrl('basket_update', array('id' => $entity->getId())),
+     * Creates a form to edit a Basket entity.
+     *
+     * @param Basket $entity The entity
+     *
+     * @return \Symfony\Component\Form\Form The form
+     */
+    private function createEditForm(Basket $entity) {
+        $form = $this->createForm(new BasketType(), $basket, array(
+            'action' => $this->generateUrl('basket_update', array('id' => $basket->getId())),
             'method' => 'PUT',
         ));
 
@@ -169,6 +163,7 @@ class BasketController extends Controller
 
         return $form;
     }
+
     /**
      * Edits an existing Basket entity.
      *
@@ -176,18 +171,17 @@ class BasketController extends Controller
      * @Method("PUT")
      * @Template("CodersLabShopBundle:Basket:edit.html.twig")
      */
-    public function updateAction(Request $request, $id)
-    {
+    public function updateAction(Request $request, $id) {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('CodersLabShopBundle:Basket')->find($id);
+        $basket = $em->getRepository('CodersLabShopBundle:Basket')->find($id);
 
-        if (!$entity) {
+        if (!$basket) {
             throw $this->createNotFoundException('Unable to find Basket entity.');
         }
 
         $deleteForm = $this->createDeleteForm($id);
-        $editForm = $this->createEditForm($entity);
+        $editForm = $this->createEditForm($basket);
         $editForm->handleRequest($request);
 
         if ($editForm->isValid()) {
@@ -197,31 +191,31 @@ class BasketController extends Controller
         }
 
         return array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
+            'basket' => $basket,
+            'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
     }
+
     /**
      * Deletes a Basket entity.
      *
      * @Route("/{id}", name="basket_delete")
      * @Method("DELETE")
      */
-    public function deleteAction(Request $request, $id)
-    {
+    public function deleteAction(Request $request, $id) {
         $form = $this->createDeleteForm($id);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('CodersLabShopBundle:Basket')->find($id);
+            $basket = $em->getRepository('CodersLabShopBundle:Basket')->find($id);
 
-            if (!$entity) {
+            if (!$basket) {
                 throw $this->createNotFoundException('Unable to find Basket entity.');
             }
 
-            $em->remove($entity);
+            $em->remove($basket);
             $em->flush();
         }
 
@@ -235,13 +229,13 @@ class BasketController extends Controller
      *
      * @return \Symfony\Component\Form\Form The form
      */
-    private function createDeleteForm($id)
-    {
+    private function createDeleteForm($id) {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('basket_delete', array('id' => $id)))
-            ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
-            ->getForm()
+                        ->setAction($this->generateUrl('basket_delete', array('id' => $id)))
+                        ->setMethod('DELETE')
+                        ->add('submit', 'submit', array('label' => 'Delete'))
+                        ->getForm()
         ;
     }
+
 }
