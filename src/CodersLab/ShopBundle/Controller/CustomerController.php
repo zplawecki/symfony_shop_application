@@ -10,6 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use CodersLab\ShopBundle\Entity\Customer;
 use CodersLab\ShopBundle\Form\CustomerType;
 use CodersLab\ShopBundle\Entity\User;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Customer controller.

@@ -10,34 +10,35 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
-class DefaultController extends Controller {
+/**
+ * Admin controller.
+ * @Route("/admin")
+ */
+class UserController extends Controller {
 
     /**
-     * @Route("/new/admin")
-     * @Method ("POST")
-     * @Template()
+     * @Route("/new/{id}")
+     * 
      */
-    public function createAdminAction(Request $req) {
-        $userManager = $this->get('fos_user.user_manager');
-        $admin = $userManager->createUser();
-        $password = $req->request->get('password');
-        $email = $req->request->get('mail');
+    public function createAdminAction(Request $req, $id) {
 
-        if ($userManager->findUserByEmail($email)) {
-            return new Response('This email already exists');
-        }
 
-        $admin->setEmail($email);
-        $admin->setPlainPassword($password);
-        $admin->setEnabled(true);
-
+        $repo = $this->getDoctrine()->getRepository('CodersLabShopBundle:User');
         $em = $this->getDoctrine()->getManager();
-        $em->persist($admin);
-        $em->flush();
+        $newAdmin = $repo->find($id);
 
-        return [
-            'admin' => $admin
-        ];
+
+        if ($newAdmin) {
+
+
+            $newAdmin->addRole('ROLE_ADMIN');
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($newAdmin);
+            $em->flush();
+
+            return new Response ('admin dodany');
+        }
     }
 
     /**
@@ -48,6 +49,27 @@ class DefaultController extends Controller {
         return [];
     }
 
-}
-?>
+    /**
+     * @Route("/delete/{id}", name = "customer_delete")
+     * 
+     */
+    public function deleteCustomerAction($id) {
 
+        $loggedUser = $this->getUser();
+        if ($loggedUser->hasRole('ROLE_ADMIN')) {
+
+            $repo = $this->getDoctrine()->getRepository('CodersLabShopBundle:Customer');
+            $em = $this->getDoctrine()->getManager();
+            $deletedCustomer = $repo->find($id);
+            if ($deletedCustomer) {
+                $em->remove($deletedCustomer);
+                $em->flush();
+            }
+
+            return new Response('uzytkownik usuniety');
+        }
+
+        return new Response('brak dostępu');
+    }
+
+}
