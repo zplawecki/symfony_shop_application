@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use CodersLab\ShopBundle\Entity\Item;
 use CodersLab\ShopBundle\Form\ItemType;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Item controller.
@@ -18,6 +19,22 @@ use CodersLab\ShopBundle\Form\ItemType;
 class ItemController extends Controller
 {
 
+    private function itemForm($item) {
+
+
+        $form = $this->createFormBuilder($item)
+                ->setAction($this->generateUrl('item_create'))
+                ->add('name', 'text', ['label' => 'Nazwa'])
+                ->add('description', 'text', ['label' => 'Opis'])
+                ->add('price', 'text', ['label' => 'Cena'])
+                ->add('save', 'submit', ['label' => 'Dodaj przedmiot'])
+                ->getForm();
+        return $form;
+    }
+    
+    
+    
+    
     /**
      * Lists all Item entities.
      *
@@ -29,10 +46,10 @@ class ItemController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entities = $em->getRepository('CodersLabShopBundle:Item')->findAll();
+        $items = $em->getRepository('CodersLabShopBundle:Item')->findAll();
 
         return array(
-            'entities' => $entities,
+            'items' => $items,
         );
     }
     /**
@@ -40,46 +57,25 @@ class ItemController extends Controller
      *
      * @Route("/", name="item_create")
      * @Method("POST")
-     * @Template("CodersLabShopBundle:Item:new.html.twig")
      */
     public function createAction(Request $request)
     {
-        $entity = new Item();
-        $form = $this->createCreateForm($entity);
+        $item = new Item();
+        $form = $this->itemForm($item);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
+            $em->persist($item);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('item_show', array('id' => $entity->getId())));
+           return $this->redirect($this->generateUrl('item_show', array('id' => $item->getId())));
+           return new Response ('dodano nowy przedmiot');
         }
 
-        return array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
-        );
+       
     }
 
-    /**
-     * Creates a form to create a Item entity.
-     *
-     * @param Item $entity The entity
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createCreateForm(Item $entity)
-    {
-        $form = $this->createForm(new ItemType(), $entity, array(
-            'action' => $this->generateUrl('item_create'),
-            'method' => 'POST',
-        ));
-
-        $form->add('submit', 'submit', array('label' => 'Create'));
-
-        return $form;
-    }
 
     /**
      * Displays a form to create a new Item entity.
@@ -90,11 +86,11 @@ class ItemController extends Controller
      */
     public function newAction()
     {
-        $entity = new Item();
-        $form   = $this->createCreateForm($entity);
+        $item = new Item();
+        $form   = $this->itemForm($item);
 
         return array(
-            'entity' => $entity,
+            'item' => $item,
             'form'   => $form->createView(),
         );
     }
@@ -110,16 +106,16 @@ class ItemController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('CodersLabShopBundle:Item')->find($id);
+        $item = $em->getRepository('CodersLabShopBundle:Item')->find($id);
 
-        if (!$entity) {
+        if (!$item) {
             throw $this->createNotFoundException('Unable to find Item entity.');
         }
 
         $deleteForm = $this->createDeleteForm($id);
 
         return array(
-            'entity'      => $entity,
+            'item'      => $item,
             'delete_form' => $deleteForm->createView(),
         );
     }
@@ -135,17 +131,17 @@ class ItemController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('CodersLabShopBundle:Item')->find($id);
+        $item = $em->getRepository('CodersLabShopBundle:Item')->find($id);
 
-        if (!$entity) {
+        if (!$item) {
             throw $this->createNotFoundException('Unable to find Item entity.');
         }
 
-        $editForm = $this->createEditForm($entity);
+        $editForm = $this->createEditForm($item);
         $deleteForm = $this->createDeleteForm($id);
 
         return array(
-            'entity'      => $entity,
+            'item'      => $item,
             'edit_form'   => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
@@ -158,10 +154,10 @@ class ItemController extends Controller
     *
     * @return \Symfony\Component\Form\Form The form
     */
-    private function createEditForm(Item $entity)
+    private function createEditForm(Item $item)
     {
-        $form = $this->createForm(new ItemType(), $entity, array(
-            'action' => $this->generateUrl('item_update', array('id' => $entity->getId())),
+        $form = $this->createForm(new ItemType(), $item, array(
+            'action' => $this->generateUrl('item_update', array('id' => $item->getId())),
             'method' => 'PUT',
         ));
 
@@ -180,14 +176,14 @@ class ItemController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('CodersLabShopBundle:Item')->find($id);
+        $item = $em->getRepository('CodersLabShopBundle:Item')->find($id);
 
-        if (!$entity) {
+        if (!$item) {
             throw $this->createNotFoundException('Unable to find Item entity.');
         }
 
         $deleteForm = $this->createDeleteForm($id);
-        $editForm = $this->createEditForm($entity);
+        $editForm = $this->createEditForm($item);
         $editForm->handleRequest($request);
 
         if ($editForm->isValid()) {
@@ -197,7 +193,7 @@ class ItemController extends Controller
         }
 
         return array(
-            'entity'      => $entity,
+            'item'      => $item,
             'edit_form'   => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
@@ -215,13 +211,13 @@ class ItemController extends Controller
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('CodersLabShopBundle:Item')->find($id);
+            $item = $em->getRepository('CodersLabShopBundle:Item')->find($id);
 
-            if (!$entity) {
+            if (!$item) {
                 throw $this->createNotFoundException('Unable to find Item entity.');
             }
 
-            $em->remove($entity);
+            $em->remove($item);
             $em->flush();
         }
 

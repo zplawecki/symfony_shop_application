@@ -14,19 +14,19 @@
             </tr>
         </thead>
         <tbody>
-        {% for entity in entities %}
+        {% for item in items %}
             <tr>
-                <td><a href="{{ path('item_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
-                <td>{{ entity.name }}</td>
-                <td>{{ entity.description }}</td>
-                <td>{{ entity.price }}</td>
+                <td><a href="{{ path('item_show', { 'id': item.id }) }}">{{ item.id }}</a></td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.description }}</td>
+                <td>{{ item.price }}</td>
                 <td>
                 <ul>
                     <li>
-                        <a href="{{ path('item_show', { 'id': entity.id }) }}">show</a>
+                        <a href="{{ path('item_show', { 'id': item.id }) }}">show</a>
                     </li>
                     <li>
-                        <a href="{{ path('item_edit', { 'id': entity.id }) }}">edit</a>
+                        <a href="{{ path('item_edit', { 'id': item.id }) }}">edit</a>
                     </li>
                 </ul>
                 </td>
