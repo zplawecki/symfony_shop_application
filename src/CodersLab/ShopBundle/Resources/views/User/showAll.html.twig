@@ -1,12 +1,15 @@
 Panel administratora<br>
 
-{% if customer is defined %}
+{% if allUsers is defined %}
 
-    {% for customer in allCustomers %}
-        {{customer.name}}
-        {{customer.surname}}
-        <a href="{{ path('customer_delete', {'id':customer.id}) }}">usuń klienta</a>
+    {% for user in allUsers %}
+        {{user.id}}<br>
+        {{user.username}}<br>
+        <a href="{{ path('user_delete', {'id':user.id}) }}">usuń klienta</a><br>
+        {% if app.user.hasRole('ROLE_ADMIN') %}
+            <a href="{{ path('new_admin', {'id':user.id}) }}">nadaj uprawnienia admina</a><br>
 
+        {% endif %}
     {%endfor%}
 
 {% else %}

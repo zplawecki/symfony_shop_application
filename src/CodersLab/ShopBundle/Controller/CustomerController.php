@@ -24,6 +24,7 @@ class CustomerController extends Controller {
 
         $form = $this->createFormBuilder($customer)
                 ->setAction($this->generateUrl('customer_registration'))
+                ->add('username', 'text', ['label' => 'Login'])
                 ->add('name', 'text', ['label' => 'Imię'])
                 ->add('surname', 'text', ['label' => 'Nazwisko'])
                 ->add('mail', 'text', ['label' => 'Adres e-mail'])
@@ -82,6 +83,7 @@ class CustomerController extends Controller {
     private function updateCustomerForm($person) {
 
         $form = $this->createFormBuilder($person)
+                ->add('username', 'text', ['label' => 'Login'])
                 ->add('name', 'text', ['label' => 'Imię'])
                 ->add('surname', 'text', ['label' => 'Nazwisko'])
                 ->add('mail', 'text', ['label' => 'Adres e-mail'])

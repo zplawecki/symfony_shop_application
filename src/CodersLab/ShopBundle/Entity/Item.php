@@ -5,7 +5,7 @@ namespace CodersLab\ShopBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use CodersLab\ShopBundle\Entity\Basket;
-use CodersLab\ShopBundle\Entity\Customer;
+use CodersLab\ShopBundle\Entity\User;
 use CodersLab\ShopBundle\Entity\Photo;
 
 /**

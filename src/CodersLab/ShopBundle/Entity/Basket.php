@@ -4,7 +4,7 @@ namespace CodersLab\ShopBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use CodersLab\ShopBundle\Entity\Customer;
+use CodersLab\ShopBundle\Entity\User;
 use CodersLab\ShopBundle\Entity\Item;
 
 /**
@@ -16,7 +16,7 @@ use CodersLab\ShopBundle\Entity\Item;
 class Basket {
 
     /**
-     * @ORM\ManyToOne(targetEntity="Customer", inversedBy="baskets")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="baskets")
      * @ORM\JoinColumn(name="customer_id", referencedColumnName="id")
      */
     private $customer;
@@ -97,7 +97,7 @@ class Basket {
      * @param integer $customer
      * @return Basket
      */
-    public function setCustomer($customer) {
+    public function setUser($customer) {
         $this->customer = $customer;
 
         return $this;
@@ -108,7 +108,7 @@ class Basket {
      *
      * @return integer 
      */
-    public function getCustomer() {
+    public function getUser() {
         return $this->customer;
     }
 
