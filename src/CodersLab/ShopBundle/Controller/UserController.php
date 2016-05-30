@@ -37,15 +37,15 @@ class UserController extends Controller {
             $em->persist($newAdmin);
             $em->flush();
 
-            return new Response ('admin dodany');
+            return new Response('admin dodany');
         }
     }
 
     /**
-     * @Route("/")
+     * @Route("/panel")
      * @Template()
      */
-    public function indexAction() {
+    public function adminPanelAction() {
         return [];
     }
 
@@ -70,6 +70,25 @@ class UserController extends Controller {
         }
 
         return new Response('brak dostępu');
+    }
+
+    /**
+     * @Route("/showAll", name = "show_all")
+     * @Template()
+     */
+    public function showAllAction() {
+
+        $loggedUser = $this->getUser();
+        if ($loggedUser->hasRole('ROLE_ADMIN')) {
+
+            $repo = $this->getDoctrine()->getRepository('CodersLabShopBundle:Customer');
+            $em = $this->getDoctrine()->getManager();
+            $allCustomers = $repo->findAll();
+
+            return [
+                'allCustomers' => $allCustomers
+            ];
+        }
     }
 
 }

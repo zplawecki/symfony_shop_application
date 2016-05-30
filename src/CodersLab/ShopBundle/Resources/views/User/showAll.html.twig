@@ -1,0 +1,22 @@
+Panel administratora<br>
+
+{% if customer is defined %}
+
+    {% for customer in allCustomers %}
+        {{customer.name}}
+        {{customer.surname}}
+        <a href="{{ path('customer_delete', {'id':customer.id}) }}">usuń klienta</a>
+
+    {%endfor%}
+
+{% else %}
+    brak użytkowników
+
+{%endif%}
+
+
+
+
+
+
+
