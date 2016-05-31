@@ -3,7 +3,6 @@
 namespace CodersLab\ShopBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use FOS\UserBundle\Doctrine\UserManager;
@@ -12,13 +11,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Doctrine\Common\Collections\ArrayCollection;
 
-
 class UserController extends Controller {
-    
+
     private function updateUserForm($person) {
 
         $form = $this->createFormBuilder($person)
-    //            ->setAction($this->generateUrl('user_update'))
+//            ->setAction($this->generateUrl('user_update'))
                 ->add('username', 'text', ['label' => 'Login'])
                 ->add('name', 'text', ['label' => 'Imię'])
                 ->add('surname', 'text', ['label' => 'Nazwisko'])
@@ -56,10 +54,15 @@ class UserController extends Controller {
     }
 
     /**
-     * @Route("/panel")
+     * @Route("/main")
      */
-    public function adminPanelAction() {
-        return [];
+    public function redirectToAction() {
+        $loggedUser = $this->getUser();
+        if ($loggedUser->hasRole('ROLE_ADMIN')) {
+            $this->redirectToRoute('/panel');
+        } else {
+            $this->redirectToRoute('/item');
+        }
     }
 
     /**
@@ -97,9 +100,8 @@ class UserController extends Controller {
             $repo = $this->getDoctrine()->getRepository('CodersLabShopBundle:User');
             $em = $this->getDoctrine()->getManager();
             $allUsers = $repo->findAll();
-            
+
             return [
-                
                 'allUsers' => $allUsers
             ];
         }
