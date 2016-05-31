@@ -290,21 +290,6 @@ class ItemController extends Controller {
         ];
     }
 
-    /**
-     * @Route("/addToBasket/{id}", name = "item_addToBasket")
-     * @Method("GET")
-     * @Template()
-     */
-    public function addToBasketAction($id) {
-        $this->addToBasketAction($id);
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($basket);
-        $em->flush();
-
-       
-        return[
-            
-        ];
-    }
+    
 
 }
