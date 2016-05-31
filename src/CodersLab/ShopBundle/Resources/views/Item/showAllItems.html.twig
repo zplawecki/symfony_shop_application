@@ -1,15 +1,15 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    <h1>Item list</h1>
+    <h1>Lista przedmiotow</h1>
 
     <table class="records_list">
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Price</th>
+                <th>Nazwa</th>
+                <th>Opis</th>
+                <th>Cena</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -23,10 +23,10 @@
                 <td>
                 <ul>
                     <li>
-                        <a href="{{ path('item_show', { 'id': item.id }) }}">show</a>
+                        <a href="{{ path('item_show', { 'id': item.id }) }}">Pokaż szczegoly</a>
                     </li>
                     <li>
-                        <a href="{{ path('item_edit', { 'id': item.id }) }}">edit</a>
+                        <a href="{{ path('item_update', { 'id': item.id }) }}">Edytuj dane przedmiotu</a>
                     </li>
                 </ul>
                 </td>
@@ -38,7 +38,7 @@
         <ul>
         <li>
             <a href="{{ path('item_new') }}">
-                Create a new entry
+                Stworz nowy wpis
             </a>
         </li>
     </ul>

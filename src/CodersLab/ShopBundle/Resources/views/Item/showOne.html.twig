@@ -1,0 +1,46 @@
+{% block body -%}
+    <h1>Strona przedmiotu</h1>
+
+    <table class="record_properties">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ item.id }}</td>
+            </tr>
+            <tr>
+                <th>Nazwa</th>
+                <td>{{ item.name }}</td>
+            </tr>
+            <tr>
+                <th>Opis</th>
+                <td>{{ item.description }}</td>
+            </tr>
+            <tr>
+                <th>Cena</th>
+                <td>{{ item.price }}</td>
+            </tr>
+          
+        </tbody>
+    </table>
+
+        <ul class="record_actions">
+    <li>
+        <a href="{{ path('item_addToBasket', { 'id':item.id }) }}">
+            Dodaj do koszyka
+        </a>
+    </li>
+    
+     <li>
+        <a href="{{ path('all_items') }}">
+            Wróć do listy przedmiotów
+        </a>
+    </li>
+    
+    <li>
+        <a href="{{ path('item_update', { 'id':item.id }) }}">
+            Edytuj dane przedmiotu
+        </a>
+    </li>
+    <li>{{ form(delete_form) }}</li>
+</ul>
+{% endblock %}

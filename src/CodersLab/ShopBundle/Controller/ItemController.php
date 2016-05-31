@@ -80,7 +80,7 @@ class ItemController extends Controller {
      * @Method("GET")
      * @Template()
      */
-    public function newAction() {
+    public function newItemAction() {
         $item = new Item();
         $form = $this->itemForm($item);
 
@@ -97,7 +97,7 @@ class ItemController extends Controller {
      * @Method("GET")
      * @Template()
      */
-    public function showAction($id) {
+    public function showOneAction($id) {
 
         $em = $this->getDoctrine()->getManager();
 
@@ -122,7 +122,7 @@ class ItemController extends Controller {
      * @Method("GET")
      * @Template()
      */
-    public function editAction($id) {
+    public function editItemAction($id) {
 
         $loggedUser = $this->getUser();
         if ($loggedUser->hasRole('ROLE_ADMIN')) {
@@ -246,6 +246,65 @@ class ItemController extends Controller {
                         ->add('submit', 'submit', array('label' => 'Delete'))
                         ->getForm()
         ;
+    }
+
+    /**
+     * @Route("/update/{id}", name = "item_update")
+     * @Method("GET")
+     * @Template()
+     */
+    public function updateItemGetAction($id) {
+        $repo = $this->getDoctrine()->getRepository('CodersLabShopBundle:Item');
+
+        $item = $repo->find($id);
+        if (!$item) {
+            return [
+                'error' => 'Wystąpił błąd, brak takiego przedmiotu w bazie danych!'
+            ];
+        }
+        $form = $this->itemForm($item);
+        return[
+            'form' => $form->createView()
+        ];
+    }
+
+    /**
+     * @Route("/update/{id}", name = "updated_item_save")
+     * @Method("POST")
+     * @Template()
+     */
+    public function updateItemPostAction(Request $req, $id) {
+        $repo = $this->getDoctrine()->getRepository('CodersLabShopBundle:Item');
+        $item = $repo->find($id);
+        $form = $this->itemForm($item, $item->getId());
+        $form->handleRequest($req);
+
+        if ($form->isSubmitted()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($item);
+            $em->flush();
+        }
+        return [
+            'form' => $form->createView(),
+            'success' => true
+        ];
+    }
+
+    /**
+     * @Route("/addToBasket/{id}", name = "item_addToBasket")
+     * @Method("GET")
+     * @Template()
+     */
+    public function addToBasketAction($id) {
+        $this->addToBasketAction($id);
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($basket);
+        $em->flush();
+
+       
+        return[
+            
+        ];
     }
 
 }
