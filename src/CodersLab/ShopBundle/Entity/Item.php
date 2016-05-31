@@ -15,7 +15,7 @@ use CodersLab\ShopBundle\Entity\Photo;
  * @ORM\Entity
  */
 class Item {
-    
+
     /**
      * @ORM\OneToMany(targetEntity="Photo", mappedBy="item")
      */
@@ -25,11 +25,6 @@ class Item {
         $this->photos = new ArrayCollection();
         $this->baskets = new ArrayCollection();
     }
-
-    /**
-     * @ORM\ManyToMany(targetEntity="Basket", mappedBy="items")
-     */
-    private $baskets;
 
     
 
@@ -135,15 +130,13 @@ class Item {
         return $this->price;
     }
 
-
     /**
      * Add photos
      *
      * @param \CodersLab\ShopBundle\Entity\Photo $photos
      * @return Item
      */
-    public function addPhoto(\CodersLab\ShopBundle\Entity\Photo $photos)
-    {
+    public function addPhoto(\CodersLab\ShopBundle\Entity\Photo $photos) {
         $this->photos[] = $photos;
 
         return $this;
@@ -154,8 +147,7 @@ class Item {
      *
      * @param \CodersLab\ShopBundle\Entity\Photo $photos
      */
-    public function removePhoto(\CodersLab\ShopBundle\Entity\Photo $photos)
-    {
+    public function removePhoto(\CodersLab\ShopBundle\Entity\Photo $photos) {
         $this->photos->removeElement($photos);
     }
 
@@ -164,8 +156,7 @@ class Item {
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getPhotos()
-    {
+    public function getPhotos() {
         return $this->photos;
     }
 
@@ -175,8 +166,7 @@ class Item {
      * @param \CodersLab\ShopBundle\Entity\Basket $baskets
      * @return Item
      */
-    public function addBasket(\CodersLab\ShopBundle\Entity\Basket $baskets)
-    {
+    public function addBasket(\CodersLab\ShopBundle\Entity\Basket $baskets) {
         $this->baskets[] = $baskets;
 
         return $this;
@@ -187,8 +177,7 @@ class Item {
      *
      * @param \CodersLab\ShopBundle\Entity\Basket $baskets
      */
-    public function removeBasket(\CodersLab\ShopBundle\Entity\Basket $baskets)
-    {
+    public function removeBasket(\CodersLab\ShopBundle\Entity\Basket $baskets) {
         $this->baskets->removeElement($baskets);
     }
 
@@ -197,8 +186,8 @@ class Item {
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getBaskets()
-    {
+    public function getBaskets() {
         return $this->baskets;
     }
+
 }

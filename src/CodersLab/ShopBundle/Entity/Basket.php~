@@ -4,7 +4,7 @@ namespace CodersLab\ShopBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use CodersLab\ShopBundle\Entity\Customer;
+use CodersLab\ShopBundle\Entity\User;
 use CodersLab\ShopBundle\Entity\Item;
 
 /**
@@ -16,14 +16,13 @@ use CodersLab\ShopBundle\Entity\Item;
 class Basket {
 
     /**
-     * @ORM\ManyToOne(targetEntity="Customer", inversedBy="baskets")
-     * @ORM\JoinColumn(name="customer_id", referencedColumnName="id")
+     * @ORM\OneToOne(targetEntity="User", inversedBy="orders")
+     * @ORM\JoinColumn(name="basket_id", referencedColumnName="id")
      */
-    private $customer;
+    private $user;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Item", inversedBy="baskets")
-     * @ORM\JoinTable(name="baskets_items")
+     * 
      */
     private $items;
 
@@ -97,7 +96,7 @@ class Basket {
      * @param integer $customer
      * @return Basket
      */
-    public function setCustomer($customer) {
+    public function setUser($customer) {
         $this->customer = $customer;
 
         return $this;
@@ -108,7 +107,7 @@ class Basket {
      *
      * @return integer 
      */
-    public function getCustomer() {
+    public function getUser() {
         return $this->customer;
     }
 
@@ -154,4 +153,37 @@ class Basket {
         return $this->quantity;
     }
 
+
+    /**
+     * Add items
+     *
+     * @param \CodersLab\ShopBundle\Entity\Item $items
+     * @return Basket
+     */
+    public function addItem(\CodersLab\ShopBundle\Entity\Item $items)
+    {
+        $this->items[] = $items;
+
+        return $this;
+    }
+
+    /**
+     * Remove items
+     *
+     * @param \CodersLab\ShopBundle\Entity\Item $items
+     */
+    public function removeItem(\CodersLab\ShopBundle\Entity\Item $items)
+    {
+        $this->items->removeElement($items);
+    }
+
+    /**
+     * Get items
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getItems()
+    {
+        return $this->items;
+    }
 }

@@ -16,14 +16,19 @@ use CodersLab\ShopBundle\Entity\Item;
 class Basket {
 
     /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="baskets")
-     * @ORM\JoinColumn(name="customer_id", referencedColumnName="id")
+     * @ORM\OneToOne(targetEntity="User", inversedBy="orders")
+     * @ORM\JoinColumn(name="basket_id", referencedColumnName="id")
      */
-    private $customer;
+    private $user;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Item", inversedBy="baskets")
-     * @ORM\JoinTable(name="baskets_items")
+     * @ORM\ManyToOne(targetEntity="Product_in_basket", inversedBy="baskets")
+     * 
+     */
+    private $productInBasket;
+
+    /**
+     * 
      */
     private $items;
 
@@ -154,15 +159,13 @@ class Basket {
         return $this->quantity;
     }
 
-
     /**
      * Add items
      *
      * @param \CodersLab\ShopBundle\Entity\Item $items
      * @return Basket
      */
-    public function addItem(\CodersLab\ShopBundle\Entity\Item $items)
-    {
+    public function addItem(\CodersLab\ShopBundle\Entity\Item $items) {
         $this->items[] = $items;
 
         return $this;
@@ -173,8 +176,7 @@ class Basket {
      *
      * @param \CodersLab\ShopBundle\Entity\Item $items
      */
-    public function removeItem(\CodersLab\ShopBundle\Entity\Item $items)
-    {
+    public function removeItem(\CodersLab\ShopBundle\Entity\Item $items) {
         $this->items->removeElement($items);
     }
 
@@ -183,8 +185,8 @@ class Basket {
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getItems()
-    {
+    public function getItems() {
         return $this->items;
     }
+
 }
