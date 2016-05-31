@@ -10,12 +10,25 @@ use FOS\UserBundle\Doctrine\UserManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Doctrine\Common\Collections\ArrayCollection;
 
-/**
- * Admin controller.
- * @Route("/admin")
- */
+
 class UserController extends Controller {
+    
+    private function updateUserForm($person) {
+
+        $form = $this->createFormBuilder($person)
+    //            ->setAction($this->generateUrl('user_update'))
+                ->add('username', 'text', ['label' => 'Login'])
+                ->add('name', 'text', ['label' => 'Imię'])
+                ->add('surname', 'text', ['label' => 'Nazwisko'])
+                ->add('mail', 'text', ['label' => 'Adres e-mail'])
+                ->add('password', 'password', ['label' => 'Haslo'])
+                ->add('address', 'text', ['label' => 'Adres e-mail'])
+                ->add('save', 'submit', ['label' => 'Zapisz zmiany'])
+                ->getForm();
+        return $form;
+    }
 
     /**
      * @Route("/new/{id}", name="new_admin")
@@ -84,7 +97,7 @@ class UserController extends Controller {
             $repo = $this->getDoctrine()->getRepository('CodersLabShopBundle:User');
             $em = $this->getDoctrine()->getManager();
             $allUsers = $repo->findAll();
-            dump($allUsers);
+            
             return [
                 
                 'allUsers' => $allUsers
@@ -92,115 +105,40 @@ class UserController extends Controller {
         }
     }
 
-    private function customerForm($customer) {
-
-
-        $form = $this->createFormBuilder($customer)
-                ->setAction($this->generateUrl('customer_registration'))
-                ->add('username', 'text', ['label' => 'Login'])
-                ->add('name', 'text', ['label' => 'Imię'])
-                ->add('surname', 'text', ['label' => 'Nazwisko'])
-                ->add('mail', 'text', ['label' => 'Adres e-mail'])
-                ->add('password', 'password', ['label' => 'Haslo'])
-                ->add('address', 'text', ['label' => 'Adres zamieszkania'])
-                ->add('save', 'submit', ['label' => 'Zarejestruj sie'])
-                ->getForm();
-        return $form;
-    }
-
-//prawidlowa sciezka do wszystkich plikow to /customer/{nasz route}, itp. dla item, basket
-
     /**
-     * Creates a new User entity.
-     *
-     * @Route("/createUser", name="customer_registration") 
-     * @Template()
-     */
-    public function createUserAction(Request $req) {
-        $repo = $this->getDoctrine()->getRepository('CodersLabShopBundle:User');
-        $customer = new User();
-
-        $form = $this->customerForm($customer);
-        $form->handleRequest($req);
-
-        if ($form->isSubmitted()) {
-            if ($repo->findByName($customer->getSurname()) || $customer->getSurname() == '') {
-                return [
-                    'error' => 'Taka osoba już istnieje lub formularz jest pusty!'
-                ];
-            }
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($customer);
-            $em->flush();
-
-            return [
-                'customer' => $customer
-            ];
-        }
-    }
-
-    /**
-     * @Route("/newUser", name = "customer_new")
-     * @Template()
-     */
-    public function newUserAction() {
-        $customer = new User();
-
-        $form = $this->customerForm($customer);
-
-        return [
-            'form' => $form->createView()
-        ];
-    }
-
-    private function updateUserForm($person) {
-
-        $form = $this->createFormBuilder($person)
-                ->add('username', 'text', ['label' => 'Login'])
-                ->add('name', 'text', ['label' => 'Imię'])
-                ->add('surname', 'text', ['label' => 'Nazwisko'])
-                ->add('mail', 'text', ['label' => 'Adres e-mail'])
-                ->add('password', 'password', ['label' => 'Haslo'])
-                ->add('address', 'text', ['label' => 'Adres e-mail'])
-                ->add('save', 'submit', ['label' => 'Zapisz zmiany'])
-                ->getForm();
-        return $form;
-    }
-
-    /**
-     * @Route("/update/{id}", name = "customer_update")
+     * @Route("/update/{id}", name = "user_update")
      * @Method("GET")
      * @Template()
      */
     public function updateUserGetAction($id) {
         $repo = $this->getDoctrine()->getRepository('CodersLabShopBundle:User');
 
-        $customer = $repo->find($id);
-        if (!$customer) {
+        $user = $repo->find($id);
+        if (!$user) {
             return [
                 'error' => 'Wystąpił błąd brak takiej osoby w bazie danych!'
             ];
         }
-        $form = $this->updateUserForm($customer);
+        $form = $this->updateUserForm($user);
         return[
             'form' => $form->createView()
         ];
     }
 
     /**
-     * @Route("/update/{id}", name = "updated_customer_save")
+     * @Route("/update/{id}", name = "updated_user_save")
      * @Method("POST")
      * @Template()
      */
     public function updateUserPostAction(Request $req, $id) {
         $repo = $this->getDoctrine()->getRepository('CodersLabShopBundle:User');
-        $customer = $repo->find($id);
-        $form = $this->updateUserForm($customer, $customer->getId());
+        $user = $repo->find($id);
+        $form = $this->updateUserForm($user, $user->getId());
         $form->handleRequest($req);
 
         if ($form->isSubmitted()) {
             $em = $this->getDoctrine()->getManager();
-            $em->persist($customer);
+            $em->persist($user);
             $em->flush();
         }
         return [
