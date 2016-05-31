@@ -34,7 +34,7 @@ class ItemController extends Controller {
     /**
      * Lists all Item entities.
      *
-     * @Route("/", name="item")
+     * @Route("/allItems", name="all_items")
      * @Method("GET")
      * @Template()
      */

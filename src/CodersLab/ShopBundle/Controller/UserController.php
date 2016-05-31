@@ -54,14 +54,24 @@ class UserController extends Controller {
     }
 
     /**
+     * @Route("/panel", name="panel")
+     * @Template()
+     */
+    public function showAdminPanelAction() {
+
+        return [
+        ];
+    }
+
+    /**
      * @Route("/main")
      */
     public function redirectToAction() {
         $loggedUser = $this->getUser();
         if ($loggedUser->hasRole('ROLE_ADMIN')) {
-            $this->redirectToRoute('/panel');
+            return $this->redirectToRoute('panel');
         } else {
-            $this->redirectToRoute('/item');
+            return $this->redirectToRoute('all_items');
         }
     }
 
