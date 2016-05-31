@@ -21,11 +21,11 @@ class BasketController extends Controller {
     /**
      * Lists all Basket entities.
      *
-     * @Route("/", name="basket")
+     * @Route("/allBaskets", name="all_baskets")
      * @Method("GET")
      * @Template()
      */
-    public function indexAction() {
+    public function showAllBasketsAction() {
         $em = $this->getDoctrine()->getManager();
 
         $basket = $em->getRepository('CodersLabShopBundle:Basket')->findAll();

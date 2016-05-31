@@ -102,7 +102,7 @@ class UserController extends Controller {
      * @Route("/showAll", name = "show_all")
      * @Template()
      */
-    public function showAllAction() {
+    public function showAllUsersAction() {
 
         $loggedUser = $this->getUser();
         if ($loggedUser->hasRole('ROLE_ADMIN')) {

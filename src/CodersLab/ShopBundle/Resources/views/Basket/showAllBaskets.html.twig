@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+Wszystkie zamówienia<br>
+
+{% if baskets is defined %}
+
+    {% for basket in baskets %}
+     ID koszyka:   {{basket.id}}<br>
+     Ilosc przedmiotow:    {{basket.quantity}}<br>
+     ID klienta:   {{basket.customer_id}}<br>
+     Status zamówienia:   {{basket.status}}<br>
+        
+        
+      {#  <a href="{{ path('basket_delete', {'id':basket.id}) }}">usuń koszyk</a><br>
+        <a href="{{ path('status_change', {'id':basket.id}) }}">Zmień status</a><br>#}
+        
+        
+    {%endfor%}
+
+{% else %}
+    brak zapisanych koszyków
+
+{%endif%}
+
+</html>

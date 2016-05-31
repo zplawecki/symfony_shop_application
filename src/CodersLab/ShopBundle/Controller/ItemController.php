@@ -38,7 +38,7 @@ class ItemController extends Controller {
      * @Method("GET")
      * @Template()
      */
-    public function indexAction() {
+    public function showAllItemsAction() {
         $em = $this->getDoctrine()->getManager();
 
         $items = $em->getRepository('CodersLabShopBundle:Item')->findAll();
