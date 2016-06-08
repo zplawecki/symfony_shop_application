@@ -240,6 +240,19 @@ class BasketController extends Controller {
         ;
     }
     
+//    $found = false;
+//foreach($user->getBasket()->getItems() as $item){
+//	if ($item->getProduct()->getId() == $product2Add->getId()){
+//		$item->setCount( $item->getCount() + 1 );
+//		$found = true;
+//		break;
+//	)
+//}
+//
+//if(!$found){
+//	//4.2.1 - 4.2.2
+//}
+    
 //    /**
 //     * @Route("/addToBasket/{id}", name = "item_addToBasket")
 //     * @Method("GET")
