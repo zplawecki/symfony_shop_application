@@ -17,6 +17,19 @@ use CodersLab\ShopBundle\Form\PhotoType;
  */
 class PhotoController extends Controller
 {
+    private function fileHandle($file, $photo) {
+        $dir = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/';
+        if (!$file)
+            return;
+        $fileName = $photo->getPath();
+        if (!empty($fileName) && file_exists($dir . $fileName)) {
+            unlink($dir . $fileName);
+        }
+        $fileName = md5(uniqid()) . '.' . $file->guessExtension();
+        $file->move($dir, $fileName);
+        $photo->setPath($fileName);
+    }
+
 
     /**
      * Lists all Photo entities.
